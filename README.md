@@ -10,3 +10,14 @@
 | base on | context | context | state | state |
 | async | third party | √ | × | √ |
 
+## 基本使用 | basic usage
+
+```
+import Store from "react-tiny-states"
+// basic
+export const selectedIndex = new Store(0)
+// async
+const list=['a','b','c']
+export const selected = new Store('',[selectedIndex],selectedIndex=>list[selectedIndex])
+
+```
