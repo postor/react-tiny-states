@@ -10,7 +10,7 @@ export class Store<T> {
   public used = 0
   private updatecb = () => false
   private pendingcb = (u: any, v: any) => { }
-  private cachedCbValues = undefined
+  public cachedCbValues = undefined
 
   constructor(
     public value: T | any,
@@ -21,16 +21,16 @@ export class Store<T> {
     this.pendingcb = (u, v) => this.addPending(0, v)
   }
 
-  addUse(by = 1) {
+  addUse(by = 1, triggerUpdate = true) {
     let last = this.used
     this.used += by
     let { stores, cb } = this
     if (!cb) return
-    stores.forEach(x => x.addUse(by))
+    stores.forEach(x => x.addUse(by, triggerUpdate))
     if (!last == !this.used) return
     if (last == 0) {
       this.refPending = this.stores.reduce((p, x) => x.pending + x.refPending + p, 0)
-      this.updatecb()
+      triggerUpdate && this.updatecb()
       stores.forEach((x: Store<any>) => x.addListener(this.updatecb, this.pendingcb))
     } else {
       stores.forEach((x: Store<any>) => x.removeListener(this.updatecb, this.pendingcb))
@@ -93,15 +93,5 @@ export class Store<T> {
   removeHookListener(cb: Callback, cbPending: PendingCallback) {
     this.hookListeners.delete(cb)
     this.removeListener(cb, cbPending)
-  }
-  waitTillReady(): Promise<any> {
-    if (!this.pending) return Promise.resolve()
-    return new Promise(resolve => {
-      let pendingcb = () => { }, cb = () => {
-        this.removeListener(cb, pendingcb)
-        resolve(this.value)
-      }
-      this.addListener(cb, pendingcb)
-    })
   }
 }

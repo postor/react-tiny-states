@@ -1,4 +1,6 @@
 comps
 pages
+examples
 next-env.d.ts
 tsconfig.*
+!dist
