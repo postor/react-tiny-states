@@ -29,7 +29,7 @@ export const selectedProfileAD = new Store(
     console.log(`selectedProfileAD`, { a, b, x })
     return `....some AD for [friends:${a.join(',')} ,desc:${b}]`
   })
-  , true
+  // , true
 )
 
 export const selectedProfileAdUnused = new Store(
@@ -39,6 +39,25 @@ export const selectedProfileAdUnused = new Store(
     console.log(`selectedProfileAdUnused`, { a, b, x })
     return `some AD for friends:${a.join(',')} desc:${b}`
   })
+)
+
+
+// computed async reducer 
+type T1 = { version: number, data: number }
+export const config = new Store<T1>(
+  {
+    version: 0,
+    data: 1
+  }
+  , [selectedProfile]
+  , (selectedProfile) => {
+    let v: Promise<(v: T1) => T1> = waitMili(3000)
+      .then(() => ({ version: 1, data: 2 }))
+      .then(conf => {
+        return (cur: T1) => cur.version < conf.version ? conf : cur
+      })
+    return v
+  }
 )
 
 function waitMili(mili) {

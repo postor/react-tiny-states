@@ -2,7 +2,8 @@ type Callback = (val: any) => Promise<any> | any
 type PendingCallback = (val: number, by: number) => Promise<any> | any
 
 export class Store<T> {
-  public listeners = new Set<Callback>()
+  public depListeners = new Set<Callback>()
+  public hookListeners = new Set<Callback>()
   public refPending = 0
   public pending = 0
   public pendingListeners = new Set<PendingCallback>()
@@ -14,8 +15,7 @@ export class Store<T> {
   constructor(
     public value: T | any,
     public stores: Store<any>[] = [],
-    public cb?: (...vals: any[]) => (T | ((v: T) => T | Promise<T> | Promise<(v: T) => T>)),
-    // public debug = false
+    public cb?: (...vals: any[]) => (T | Promise<T> | Promise<(state: T) => T> | ((v: T) => T) | ((v: T) => Promise<(state: T) => T>)),
   ) {
     this.updatecb = this.update.bind(this)
     this.pendingcb = (u, v) => this.addPending(0, v)
@@ -30,25 +30,12 @@ export class Store<T> {
     if (!last == !this.used) return
     if (last == 0) {
       this.refPending = this.stores.reduce((p, x) => x.pending + x.refPending + p, 0)
-      // this.debug && console.log({
-      //   refPending: this.refPending,
-      //   // useBy: by,
-      //   // used: this.used,
-      //   mount: 1
-      // })
-      if (!this.refPending) this.updatecb()
+      this.updatecb()
       stores.forEach((x: Store<any>) => x.addListener(this.updatecb, this.pendingcb))
-      // if (this.debug && this.refPending == 3) debugger
     } else {
-      // this.debug && console.log({
-      //   // useBy: by,
-      //   // used: this.used,
-      //   unmount: 1
-      // })
       stores.forEach((x: Store<any>) => x.removeListener(this.updatecb, this.pendingcb))
     }
   }
-
   update() {
     let { stores, cb } = this
     if ((this.pending + this.refPending) || !cb) return
@@ -58,8 +45,7 @@ export class Store<T> {
     let rtn = this.cb(...cbValues)
     return this.setState(rtn)
   }
-
-  setState(val: T | ((v: T) => T | Promise<T> | Promise<(v: T) => T>)) {
+  setState(val: T | Promise<T> | Promise<(state: T) => T> | ((v: T) => T) | ((v: T) => Promise<(state: T) => T>)) {
     const handlePromise = p => {
       this.addPending(1)
       p.then((x: T | ((v: T) => T)) => {
@@ -80,36 +66,34 @@ export class Store<T> {
       this.emit(val)
     }
   }
-
   addPending(by = 1, refBy = 0) {
     this.pending += by
     this.refPending += refBy
     let pending = this.pending + this.refPending
     this.pendingListeners.forEach(x => x(pending, by + refBy))
-    // if (!this.debug) return
-    // // if (refBy == 1) debugger
-    // console.log({
-    //   by, refBy, pending: `${pending}=${this.pending}+${this.refPending}`,
-    //   value: this.value
-    // })
   }
-
   emit(val: T): void {
-    if (val == this.value || (this.pending + this.refPending)) return
+    if (val == this.value) return
     this.value = val
-    this.listeners.forEach(x => x(val))
+    if (!(this.pending + this.refPending)) this.depListeners.forEach(x => x(val))
+    this.hookListeners.forEach(x => x(val))
   }
-
   addListener(cb: Callback, cbPending: PendingCallback) {
-    this.listeners.add(cb)
+    this.depListeners.add(cb)
     this.pendingListeners.add(cbPending)
   }
-
+  addHookListener(cb: Callback, cbPending: PendingCallback) {
+    this.hookListeners.add(cb)
+    this.addListener(cb, cbPending)
+  }
   removeListener(cb: Callback, cbPending: PendingCallback) {
-    this.listeners.delete(cb)
+    this.depListeners.delete(cb)
     this.pendingListeners.delete(cbPending)
   }
-
+  removeHookListener(cb: Callback, cbPending: PendingCallback) {
+    this.hookListeners.delete(cb)
+    this.removeListener(cb, cbPending)
+  }
   waitTillReady(): Promise<any> {
     if (!this.pending) return Promise.resolve()
     return new Promise(resolve => {
