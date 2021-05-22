@@ -25,7 +25,7 @@
     "react-dom": "^17.0.2",
     "typescript": "^4.2.4"
   },
-  "description": "tiny states management for react",
+  "description": "用来给 React 管理小状态的库 | tiny states management for react",
   "main": "dist/index.js",
   "repository": {
     "type": "git",

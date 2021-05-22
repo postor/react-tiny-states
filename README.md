@@ -56,3 +56,6 @@ const Test = () => {
 }
 ```
 
+## ssr
+
+refer [examples/ssr](./examples/ssr)

@@ -17,12 +17,21 @@ export async function waitStoresReady(stores: Store<any>[] = []) {
 }
 
 export function initStores(stores: Store<any>[] = [], values = []) {
+  let visited = new Set()
   stores.forEach((x, i) => {
     x.value = values[i]
-    x.addUse(1, false)
   })
-  stores.forEach(x => x.cachedCbValues = x.stores.length
-    ? x.stores.map(y => y.value)
-    : undefined)
+  stores.forEach(x => updateStore(x))
+  visited.clear()
   return () => stores.forEach(x => x.addUse(-1))
+
+  function updateStore(x: Store<any>) {
+    if (visited.has(x)) return
+    visited.add(x)
+    x.addUse(1, false)
+    if (x.stores) {
+      x.stores.forEach(y => updateStore(y))
+      x.cachedCbValues = x.stores.map(y => y.value)
+    }
+  }
 }
