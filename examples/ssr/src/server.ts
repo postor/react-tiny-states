@@ -10,9 +10,7 @@ app.get('/:id', async (req, res) => {
   let id = parseInt(req.params['id']) || 0
   let [vals, html] = await render(id)
   let content = await readFile(join(__dirname, '..', 'index.html'), 'utf-8')
-  console.log(content)
   let page = template(content, { vals: JSON.stringify(vals), html })
-  console.log(page)
   res.send(page)
 })
 
