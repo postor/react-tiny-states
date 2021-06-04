@@ -1,12 +1,16 @@
 # ssr example
 
+```
+
+```
+
 ## wait store values and generate html
 
 [src/render.ts](./src/render.ts)
 ```
 export async function render(i: number) {
-  selectedIndex.value = i // update 
-  let vals = await waitStoresReady(stores)
+  selectedIndex.setState(i)
+  let vals = Store.waitStoresReady(stores)
   return [vals, renderToString(createElement(Index))]
 }
 ```
@@ -28,7 +32,8 @@ export async function render(i: number) {
 
 [src/client.ts](./src/client.ts)
 ```
-initStores(stores, window.STORE_VALS)
+let { STORE_VALS } = window
+Store.initStores(stores, STORE_VALS)
 
 ReactDOM.render(
   createElement(Index),

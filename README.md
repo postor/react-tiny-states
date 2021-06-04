@@ -21,7 +21,7 @@ const selectedIndex = new Store(0)
 // 异步变量 | async init
 const list = new Store([], [], () => getList().then((list=[])=>list)
 const Index=()=>{
-  let [arr,pending]=useStore(list)
+  let [arr,pending]=list.use()
   if(pending) return 'loading...'
   return <ul>{arr.map((x,i)=><li key={i}>{x}</li>)}</ul>
 }
@@ -37,8 +37,9 @@ const desc = new Store(
 )
 
 // 更新 | update
+let val = new Store(0)
 const Test = () => {
-  let [i, pending, setI] = useStore(index)
+  let [i, pending, setI] = val.use()
   return <>
     <p>value:{i + ''},pending:{pending + ''}</p>
     <button onClick={
@@ -51,7 +52,7 @@ const Test = () => {
       // 异步 reducer 更新 | async reducer update
       () => setI(() => new Promise(resolve => {
       setTimeout(() => resolve(y => y + 1), 1000)
-    }))}>+1 delay 1s</button>
+    }) as Promise<(v: number) => number>)}>+1 delay 1s</button>
   </>
 }
 ```

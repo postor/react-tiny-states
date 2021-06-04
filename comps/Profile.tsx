@@ -1,11 +1,10 @@
-import { useStore } from "../lib"
 import ProfileAD from "./ProfileAD"
 import ProfileDesc from "./ProfileDesc"
 import ProfileFriends from "./ProfileFriends"
 import { selectedProfile } from "./stores"
 
 const Profile = () => {
-  let [profile] = useStore(selectedProfile)
+  let [profile] = selectedProfile.use()
   return (<div>
     <h1>{profile}</h1>
     <ProfileDesc />

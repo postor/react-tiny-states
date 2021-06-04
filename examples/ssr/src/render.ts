@@ -1,12 +1,12 @@
 import { createElement } from 'react'
 import { renderToString } from 'react-dom/server'
+import Store from 'react-tiny-states'
 import { selectedIndex, stores } from './comps/stores'
 import Index from './pages'
-import { waitStoresReady } from 'react-tiny-states/dist/ssr'
 
 export async function render(i: number) {
-  selectedIndex.value = i
-  let vals = await waitStoresReady(stores)
+  selectedIndex.setState(i)
+  let vals = await Store.waitStoresReady(stores)
   return [vals, renderToString(createElement(Index))]
 }
 

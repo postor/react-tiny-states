@@ -3,4 +3,5 @@ pages
 examples
 next-env.d.ts
 tsconfig.*
+.next
 !dist

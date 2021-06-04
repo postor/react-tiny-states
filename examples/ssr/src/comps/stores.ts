@@ -1,17 +1,17 @@
 import Store from "react-tiny-states"
 
-export const selectedIndex = new Store<number>(0)
-export const list = new Store<string[]>([], [], () => {
+export const selectedIndex = new Store(0)
+export const list = new Store([], [], () => {
   let rtn: Promise<string[]> = waitMili(500).then(x => ['a', 'b', 'c'])
   return rtn
 })
-export const selectedProfile = new Store<string>(
+export const selectedProfile = new Store(
   ''
   , [list, selectedIndex]
   , (list, selectedIndex) => list[selectedIndex]
 )
 
-export const selectedProfileFriends = new Store<string[]>(
+export const selectedProfileFriends = new Store(
   []
   , [selectedProfile]
   , selectedProfile => {
@@ -21,7 +21,7 @@ export const selectedProfileFriends = new Store<string[]>(
   }
 )
 
-export const selectedProfileDesc = new Store<string>(
+export const selectedProfileDesc = new Store(
   'default desc'
   , [selectedProfile]
   , (selectedProfile) => {
@@ -30,7 +30,7 @@ export const selectedProfileDesc = new Store<string>(
   }
 )
 
-export const selectedProfileAD = new Store<string>(
+export const selectedProfileAD = new Store(
   ''
   , [selectedProfileFriends, selectedProfileDesc]
   , (a, b) => {
@@ -58,7 +58,7 @@ export const selectedProfileAdUnused = new Store(
 
 // computed async reducer 
 type T1 = { version: number, data: number }
-export const config = new Store<T1>(
+export const config = new Store<T1, [typeof selectedProfile]>(
   {
     version: 0,
     data: 1

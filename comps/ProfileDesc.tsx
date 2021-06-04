@@ -1,8 +1,7 @@
-import { useStore } from "../lib"
 import { selectedProfileDesc } from "./stores"
 
 const ProfileDesc = () => {
-  let [desc, pending] = useStore(selectedProfileDesc)
+  let [desc, pending] = selectedProfileDesc.use()
   return (<div>
     <p>{pending ? `desc loading....` : `desc: ${desc}`}</p>
   </div>)

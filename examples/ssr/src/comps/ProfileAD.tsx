@@ -1,5 +1,4 @@
 import { useEffect } from "react"
-import { useStore } from "react-tiny-states"
 import { selectedProfileAD } from "./stores"
 
 const ProfileAD = () => {
@@ -7,7 +6,7 @@ const ProfileAD = () => {
     console.log('ProfileAD mounted')
     return () => console.log('ProfileAD unmounted')
   }, [])
-  let [ad, pending] = useStore(selectedProfileAD)
+  let [ad, pending] = selectedProfileAD.use()
   return (<div>{pending ? 'loading AD ...' : ad}</div>)
 }
 

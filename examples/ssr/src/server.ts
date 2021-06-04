@@ -13,6 +13,7 @@ app.get('/:id', async (req, res) => {
   let page = template(content, { vals: JSON.stringify(vals), html })
   res.send(page)
 })
+app.use('/', (req, res) => res.redirect('/0'))
 
 // @ts-ignore
 app.listen(3000, () => console.log('server started on 3000'))

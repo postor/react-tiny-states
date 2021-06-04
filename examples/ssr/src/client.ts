@@ -1,11 +1,11 @@
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
+import Store from 'react-tiny-states'
 import { stores } from './comps/stores'
-import { initStores } from 'react-tiny-states/dist/ssr'
 import Index from './pages'
-
 // @ts-ignore
-initStores(stores, window.STORE_VALS)
+let { STORE_VALS } = window
+Store.initStores(stores, STORE_VALS)
 
 ReactDOM.render(
   createElement(Index),

@@ -1,9 +1,8 @@
-import { useStore } from "../lib"
 import { list, selectedIndex } from "./stores"
 
 const List = () => {
-  let [users, pending] = useStore(list)
-  let [i, , setI] = useStore(selectedIndex)
+  let [users, pending] = list.use()
+  let [i, , setI] = selectedIndex.use()
   // return <div>{JSON.stringify({ users, pending, i })}</div>
   if (pending) {
     return <div>list loading...</div>
