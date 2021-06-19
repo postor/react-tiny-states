@@ -1,6 +1,6 @@
 {
   "name": "react-tiny-states",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "dependencies": {},
   "scripts": {
     "dev": "next dev",
@@ -23,6 +23,7 @@
     "next": "^10.2.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "rollup-plugin-define": "^1.0.1",
     "typescript": "^4.2.4"
   },
   "description": "用来给 React 管理小状态的库 | tiny states management for react",

@@ -13,7 +13,7 @@
 ## 基本使用 | basic usage
 
 ```
-import Store,{useStore} from "react-tiny-states"
+import Store from "react-tiny-states"
 
 // 简单变量 | basic init 
 const selectedIndex = new Store(0)
